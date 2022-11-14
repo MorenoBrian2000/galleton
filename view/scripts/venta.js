@@ -6,57 +6,59 @@ let detalles = 0;
 /*=============================================
 AGREGAR DETALLE DE COMPRA
 =============================================*/
-const btnAgregar = document.querySelector(".agregar");
+const agregar = document.getElementsByClassName("agregar");
 const details = document.querySelector("#detalles");
 
-btnAgregar.addEventListener("click", () => {
-  let idProducto = btnAgregar.getAttribute("idProducto");
-  //   let idProducto = $(this).attr("idProducto");
-  let titulo = btnAgregar.getAttribute("titulo");
-  let cantidad = 1;
-  let unidad = 1;
-  let precio_venta = 1;
-
-  if (idProducto != "") {
+for (let i = 0; i < agregar.length; i++) {
+  agregar[i].addEventListener("click", function () {
+    let idProducto = this.getAttribute("idProducto");
+    let titulo = this.getAttribute("titulo");
+    let cantidad = 1;
+    let unidad = 1;
+    let precio_venta = 1;
+    const fila = document.createElement("tr");
+    fila.id = "fila" + cont;
+    fila.className = "filas";
     let subtotal = cantidad * unidad;
-    let fila = `
-          <tr class="filas" id="fila${cont}">
-               <td>
-                    <button type="button" class="btn btn-danger" onclick="eliminarDetalle(${cont})">
-                         <i class="fa fa-times"></i>
-                    </button>
-               </td>
-               <td>
-                    <input type="hidden"  name="idProducto[]" value="${idProducto}">
-                    <input type="hidden"  name="titulo[]" value="${titulo}">
-                    <input type="hidden"  name="cantidad[]" value="${cantidad}">
-                    <input type="hidden"  name="unidad[]" value="${unidad}">
-                    <input type="hidden"  name="precio_venta[]" value="${precio_venta}">
-                    <input type="hidden"  name="totalCompra[]" value="${subtotal}">
-                    ${titulo}
-               </td>
-               <td>${cantidad}</td>
-               <td>${unidad}</td>
-               <td>${precio_venta}</td>
-               <td>${subtotal}</td>
-          </tr>
-     `;
-    details.insertAdjacentHTML("beforeend", fila);
-    //   $("#detalles").append(fila);
+    fila.innerHTML = `
+        <td>
+          <button type="button" class="btn btn-danger" onclick="eliminarDetalle(${cont})">
+            <i class="fa fa-times" aria-hidden="true"></i>
+          </button>
+        </td>
+        <td>
+            <input type="hidden"  name="idProducto[]" value="${idProducto}">
+            ${titulo}
+        </td>
+        <td>
+            <input type="number" class="form-control" name="cantidad[]" id="cantidad" value="${cantidad}" min="1" onchange="modificarSubtotales()">
+        </td>
+        <td>
+          <select id="unidad[]" name="unidad[]" class="form-select unidad" aria-label="Default select example">
+            <option value="1" selected>Kg</option>
+            <option value="2">Pieza</option>
+            <option value="3">Empaques</option>
+          </select>
+        </td>
+        <td>
+            <input type="number" class="form-control" name="precio_venta[]" id="precio_venta" value="${precio_venta}" min="1" readonly>
+        </td>
+        <td>
+            <input type="number" class="form-control" name="totalCompra[]" id="totalCompra" value="${subtotal}" min="1" readonly>
+        </td>
+    `;
+
     cont++;
-    detalles = detalles + 1;
+    detalles++;
+    details.appendChild(fila);
     modificarSubtotales();
-  } else {
-    alert(
-      "Error al ingresar detalle de compra, verifique los datos del producto."
-    );
-  }
-});
+  });
+}
 
 /*=============================================
 ACTUALIZAR SUBTOTALES
 =============================================*/
-const canti = document.querySelector(".canti");
+/* const canti = document.querySelector("#cantidad");
 canti.addEventListener("change", () => {
   let cant = document.getElementsByName("cantidad[]");
   let uni = document.getElementsByName("unidad[]");
@@ -72,9 +74,9 @@ canti.addEventListener("change", () => {
   }
 
   calcularTotales();
-});
+}); */
 
-const preci = document.querySelector(".preci");
+/* const preci = document.querySelector(".preci");
 preci.addEventListener("change", () => {
   let cant = document.getElementsByName("cantidad[]");
   let uni = document.getElementsByName("unidad[]");
@@ -90,36 +92,44 @@ preci.addEventListener("change", () => {
   }
 
   calcularTotales();
-});
+}); */
 
 function modificarSubtotales() {
   let cant = document.getElementsByName("cantidad[]");
   let uni = document.getElementsByName("unidad[]");
   let sub = document.getElementsByName("totalCompra[]");
-
-  for (let i = 0; i < cant.length; i++) {
+  let total = [];
+  // console.log(cant);
+  // console.log(uni);
+  // console.log(sub);
+  for (let i = 0; i < sub.length; i++) {
     let inpC = cant[i];
     let inpP = uni[i];
     let inpS = sub[i];
+    // console.log(inpS);
+    // console.log(inpS.value);
 
     inpS.value = inpC.value * inpP.value;
-    document.getElementsByName("totalCompra[]")[i].innerHTML = inpS.value;
+    total.push(Number(inpS.value));
+    // console.log(inpS.value);
+    // document.getElementsByName("totalCompra[]")[i].innerHTML = inpS.value;
   }
-
-  calcularTotales();
+  // console.log(total);
+  // console.log(total.reduce((a, b) => a + b, 0));
+  calcularTotales(total.reduce((a, b) => a + b, 0));
 }
 
 /*=============================================
 CALCULAR TOTALES DE COMPRA
 =============================================*/
 
-function calcularTotales() {
-  let sub = document.getElementsByName("totalCompra[]");
-  let total = 0.0;
+function calcularTotales(total) {
+  // let sub = document.getElementsByName("totalCompra[]");
+  // let total = 0.0;
 
-  for (let i = 0; i < sub.length; i++) {
-    total += document.getElementsByName("totalCompra[]")[i].value;
-  }
+  // for (let i = 0; i < sub.length; i++) {
+  //   total += document.getElementsByName("totalCompra[]")[i].value;
+  // }
   document.getElementById("total").innerHTML = "S/. " + total;
   document.getElementById("total_compra").value = total;
   evaluar();
