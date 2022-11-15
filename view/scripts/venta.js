@@ -7,7 +7,7 @@ let detalles = 0;
 AGREGAR DETALLE DE COMPRA
 =============================================*/
 const agregar = document.getElementsByClassName("agregar");
-const details = document.querySelector("#detalles");
+const details = document.querySelector("#productos");
 
 for (let i = 0; i < agregar.length; i++) {
   agregar[i].addEventListener("click", function () {
@@ -23,7 +23,7 @@ for (let i = 0; i < agregar.length; i++) {
     fila.innerHTML = `
         <td>
           <button type="button" class="btn btn-danger" onclick="eliminarDetalle(${cont})">
-            <i class="fa fa-times" aria-hidden="true"></i>
+            <img src="./assets/images/galletas-delete.png" alt="">
           </button>
         </td>
         <td>
